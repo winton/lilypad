@@ -52,10 +52,6 @@ module Rack
         end
       end
       
-      def to_string(obj)
-        obj.respond_to?(:strip) ? obj : obj.inspect
-      end
-      
       def log(msg)
         ::File.open(@log, 'a') { |f| f.write(msg) } if @log
       end
@@ -88,6 +84,10 @@ module Rack
         %w(staging production).include?(ENV['RACK_ENV'])
       end
       
+      def to_string(obj)
+        obj.respond_to?(:strip) ? obj : obj.inspect
+      end
+      
       def xml(exception, env)
         environment = filter(ENV.to_hash.merge(env))
         request = Rack::Request.new(env)
@@ -100,7 +100,7 @@ module Rack
           n.notifier do |n|
             n.name 'Lilypad'
             n.url 'http://github.com/winton/lilypad'
-            n.version '0.1.0'
+            n.version '0.1.7'
           end
           n.error do |e|
             e.tag! 'class', exception.class.name
