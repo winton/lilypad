@@ -1,36 +1,29 @@
-GemTemplate
-===========
+Lilypad
+=======
 
-A gem template for new projects.
+Hoptoad notifier for Rack-based frameworks.
 
-Requirements
-------------
-
-<pre>
-sudo gem install stencil --source http://gemcutter.org
-</pre>
-
-Setup the template
-------------------
-
-You only have to do this once.
+Install
+-------
 
 <pre>
-git clone git@github.com:winton/lilypad.git
-cd lilypad
-stencil
+sudo gem install lilypad --source http://gemcutter.org
 </pre>
 
-Setup a new project
--------------------
-
-Do this for every new project.
+Use it
+------
 
 <pre>
-mkdir my_project
-git init
-stencil lilypad
-rake rename
+require 'rubygems'
+require 'rack/lilypad'
+
+use Rack::Lilypad, 'fd48c7d26f724503a0280f808f44b339fc65fab8'
 </pre>
 
-The last command does a find-replace (gem\_template -> my\_project) on files and filenames.
+To specify environment filters:
+
+<pre>
+use Rack::Lilypad, 'fd48c7d26f724503a0280f808f44b339fc65fab8' do |hoptoad|
+	hoptoad.filters << %w(AWS_ACCESS_KEY  AWS_SECRET_ACCESS_KEY AWS_ACCOUNT SSH_AUTH_SOCK)
+end
+</pre>
