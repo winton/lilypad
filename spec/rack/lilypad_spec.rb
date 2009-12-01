@@ -59,4 +59,10 @@ describe Rack::Lilypad do
     end
     errors.length.should == 0
   end
+  
+  it "should not do anything if non-production environment" do
+    ENV['RACK_ENV'] = 'development'
+    @http.should_not_receive(:post)
+    get "/raise" rescue nil
+  end
 end
