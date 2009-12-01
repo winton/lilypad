@@ -2,8 +2,14 @@ $testing = true
 SPEC = File.dirname(__FILE__)
 $:.unshift File.expand_path("#{SPEC}/../lib")
 
-require 'gem_template'
+require 'rack/lilypad'
 require 'pp'
+
+require 'rubygems'
+require 'rack/test'
+require 'sinatra/base'
+
+require File.expand_path("#{SPEC}/fixtures/sinatra")
 
 Spec::Runner.configure do |config|
 end

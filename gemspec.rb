@@ -1,4 +1,4 @@
-GEM_NAME = 'gem_template'
+GEM_NAME = 'lilypad'
 GEM_FILES = FileList['**/*'] - FileList['coverage', 'coverage/**/*', 'pkg', 'pkg/**/*']
 GEM_SPEC = Gem::Specification.new do |s|
   # == CONFIGURE ==
