@@ -21,3 +21,6 @@ def debug(object)
   puts object.pretty_inspect.gsub('<', '&lt;').gsub('>', '&gt;')
   puts "</pre>"
 end
+
+class TestError < RuntimeError
+end

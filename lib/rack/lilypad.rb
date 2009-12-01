@@ -11,6 +11,7 @@ module Rack
       @app = app
       @filters = []
       yield self if block_given?
+      @filters.flatten!
       @hoptoad = Hoptoad.new(api_key, @filters)
     end
 

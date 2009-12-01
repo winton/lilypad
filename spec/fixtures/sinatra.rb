@@ -3,6 +3,6 @@ class SinatraApp < Sinatra::Base
   use Rack::Lilypad, 'xxx'
   
   get "/raise" do
-    raise 'Test'
+    raise TestError, 'Test'
   end
 end

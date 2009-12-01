@@ -17,9 +17,21 @@ describe Rack::Lilypad do
     Net::HTTP.stub!(:start).and_yield(@http)
   end
   
+  it "yields a configuration object to the block when created" do
+    notifier = Rack::Lilypad.new(lambda {}, '') do |app|
+      app.filters << %w(T1 T2)
+    end
+    notifier.filters.should include('T1')
+    notifier.filters.should include('T2')
+  end
+  
   it "should post an error to Hoptoad" do
     @http.should_receive(:post)
     get "/raise" rescue nil
+  end
+  
+  it "should re-raise the exception" do
+    lambda { get "/raise" }.should raise_error(TestError)
   end
   
   it "should transfer valid XML to Hoptoad" do
