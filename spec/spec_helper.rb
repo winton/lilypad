@@ -6,6 +6,7 @@ require 'rack/lilypad'
 require 'pp'
 
 require 'rubygems'
+require 'nokogiri'
 require 'rack/test'
 require 'sinatra/base'
 

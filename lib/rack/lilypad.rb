@@ -77,8 +77,9 @@ module Rack
         request_path = request.script_name + request.path_info
         
         xml = ::Builder::XmlMarkup.new
-        xml.instruct! :xml, :version=>"1.0", :encoding=>"UTF-8"
-        xml.notice do |n|
+        xml.instruct! :xml, :version => "1.0", :encoding => "UTF-8"
+        xml.notice(:version => '2.0.0') do |n|
+          n.tag! 'api-key', @api_key
           n.notifier do |n|
             n.name 'Lilypad'
             n.url 'http://github.com/winton/lilypad'
@@ -99,14 +100,14 @@ module Rack
             if request.params.any?
               r.params do |p|
                 request.params.each do |key, value|
-                  p.var(:key => key, :value => value)
+                  p.var(value, :key => key)
                 end
               end
             end
             if environment.any?
               r.tag!('cgi-data') do |c|
                 environment.each do |key, value|
-                  c.var(:key => key, :value => value)
+                  c.var(value, :key => key)
                 end
               end
             end
@@ -116,7 +117,13 @@ module Rack
             s.tag! 'environment-name', ENV['RACK_ENV'] || 'development'
           end
         end
-        xml.target!
+        @@last_response = xml.target!
+      end
+      
+      class <<self
+        def last_response
+          @@last_response
+        end
       end
 
       class Backtrace < Struct.new(:file, :number, :method)
