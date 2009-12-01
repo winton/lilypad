@@ -1,7 +1,6 @@
 require 'builder'
 require 'net/http'
 require 'rack'
-require 'yaml'
 
 module Rack
   class Lilypad
