@@ -6,13 +6,15 @@ module Rack
   class Lilypad
     
     attr_accessor :filters
+    attr_accessor :log
 
     def initialize(app, api_key = nil)
       @app = app
       @filters = []
+      @log = false
       yield self if block_given?
       @filters.flatten!
-      @hoptoad = Hoptoad.new(api_key, @filters)
+      @hoptoad = Hoptoad.new(api_key, @filters, @log)
     end
 
     def call(env)
@@ -29,9 +31,10 @@ module Rack
 
     class Hoptoad
       
-      def initialize(api_key = nil, filters = [])
+      def initialize(api_key, filters, log)
         @api_key = api_key
         @filters = filters
+        @log = log
       end
       
       def backtrace(exception)
@@ -49,6 +52,10 @@ module Rack
         end
       end
       
+      def log(msg)
+        ::File.open(@log, 'a') { |f| f.write(msg) } if @log
+      end
+      
       def post(exception, env)
         return unless production?
         uri = URI.parse("http://hoptoadapp.com/notices/")
@@ -59,10 +66,16 @@ module Rack
           }
           http.read_timeout = 5 # seconds
           http.open_timeout = 2 # seconds
-          begin
+          response = begin
             http.post uri.path, xml(exception, env), headers
             env['hoptoad.notified'] = true
           rescue TimeoutError => e
+          end
+          case response
+          when Net::HTTPSuccess then
+            log "Hoptoad Success: #{response.class}"
+          else
+            log "Hoptoad Failure: #{response.class}\n\n#{response.body if response.respond_to? :body}\n\n#{@@last_response}"
           end
         end
       end

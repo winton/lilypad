@@ -32,6 +32,17 @@ In Rails, you may need to do this:
 ENV['RACK_ENV'] = ENV['RAILS_ENV']
 </pre>
 
+Debug
+-----
+
+Use the log option to see what is happening:
+
+<pre>
+use Rack::Lilypad, 'fd48c7d26f724503a0280f808f44b339fc65fab8' do |hoptoad|
+  hoptoad.log = '/var/www/log/hoptoad.log'
+end
+</pre>
+
 Thanks
 ------
 

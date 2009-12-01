@@ -10,19 +10,32 @@ describe Rack::Lilypad do
   
   before(:each) do
     ENV['RACK_ENV'] = 'production'
+    @app = lambda { |env| raise TestError, 'Test' }
+    @env = Rack::MockRequest.env_for("/raise")
     @http = mock(:http)
     @http.stub!(:read_timeout=)
     @http.stub!(:open_timeout=)
-    @http.stub!(:post)
+    @http.stub!(:post).and_return Net::HTTPSuccess
     Net::HTTP.stub!(:start).and_yield(@http)
   end
   
-  it "yields a configuration object to the block when created" do
-    notifier = Rack::Lilypad.new(lambda {}, '') do |app|
+  it "should yield a configuration object to the block when created" do
+    notifier = Rack::Lilypad.new(@app, '') do |app|
       app.filters << %w(T1 T2)
     end
     notifier.filters.should include('T1')
     notifier.filters.should include('T2')
+  end
+  
+  it "should write to a log if specified" do
+    path = "#{SPEC}/fixtures/hoptoad.log"
+    notifier = Rack::Lilypad.new(@app, '') do |app|
+      app.log = path
+    end
+    notifier.call(@env) rescue nil
+    File.exists?(path).should == true
+    File.delete path
+    File.exists?(path).should == false
   end
   
   it "should post an error to Hoptoad" do
