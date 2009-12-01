@@ -15,21 +15,22 @@ Use it
 
 <pre>
 require 'rack/lilypad'
-use Rack::Lilypad, 'fd48c7d26f724503a0280f808f44b339fc65fab8'
+use Rack::Lilypad, 'hoptoad_api_key_goes_here'
 </pre>
 
 To specify environment filters:
 
 <pre>
-use Rack::Lilypad, 'fd48c7d26f724503a0280f808f44b339fc65fab8' do |hoptoad|
+use Rack::Lilypad, 'hoptoad_api_key_goes_here' do |hoptoad|
   hoptoad.filters << %w(AWS_ACCESS_KEY  AWS_SECRET_ACCESS_KEY AWS_ACCOUNT SSH_AUTH_SOCK)
 end
 </pre>
 
-In Rails, you may need to do this:
+In Rails, you will need to do this in the <code>Rails::Initializer.run</code> block in environment.rb:
 
 <pre>
 ENV['RACK_ENV'] = ENV['RAILS_ENV']
+config.middleware.use Rack::Lilypad, 'hoptoad_api_key_goes_here'
 </pre>
 
 Debug
@@ -38,7 +39,7 @@ Debug
 Use the log option to see what is happening:
 
 <pre>
-use Rack::Lilypad, 'fd48c7d26f724503a0280f808f44b339fc65fab8' do |hoptoad|
+use Rack::Lilypad, 'hoptoad_api_key_goes_here' do |hoptoad|
   hoptoad.log = '/var/www/log/hoptoad.log'
 end
 </pre>
