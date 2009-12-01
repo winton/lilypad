@@ -15,7 +15,6 @@ Use it
 
 <pre>
 require 'rack/lilypad'
-
 use Rack::Lilypad, 'fd48c7d26f724503a0280f808f44b339fc65fab8'
 </pre>
 
@@ -25,6 +24,12 @@ To specify environment filters:
 use Rack::Lilypad, 'fd48c7d26f724503a0280f808f44b339fc65fab8' do |hoptoad|
   hoptoad.filters << %w(AWS_ACCESS_KEY  AWS_SECRET_ACCESS_KEY AWS_ACCOUNT SSH_AUTH_SOCK)
 end
+</pre>
+
+In Rails, you may need to do this:
+
+<pre>
+ENV['RACK_ENV'] = ENV['RAILS_ENV']
 </pre>
 
 Thanks
