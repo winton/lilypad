@@ -68,11 +68,11 @@ module Rack
           http.open_timeout = 2 # seconds
           response = begin
             http.post uri.path, xml(exception, env), headers
-            env['hoptoad.notified'] = true
           rescue TimeoutError => e
           end
           case response
           when Net::HTTPSuccess then
+            env['hoptoad.notified'] = true
             log "Hoptoad Success: #{response.class}"
           else
             log "Hoptoad Failure: #{response.class}\n\n#{response.body if response.respond_to? :body}\n\n#{@@last_response}"
