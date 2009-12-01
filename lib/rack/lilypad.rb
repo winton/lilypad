@@ -52,6 +52,10 @@ module Rack
         end
       end
       
+      def to_string(obj)
+        obj.respond_to?(:trim) ? obj : obj.inspect
+      end
+      
       def log(msg)
         ::File.open(@log, 'a') { |f| f.write(msg) } if @log
       end
@@ -113,14 +117,14 @@ module Rack
             if request.params.any?
               r.params do |p|
                 request.params.each do |key, value|
-                  p.var(value, :key => key)
+                  p.var(to_string(value), :key => key)
                 end
               end
             end
             if environment.any?
               r.tag!('cgi-data') do |c|
                 environment.each do |key, value|
-                  c.var(value, :key => key)
+                  c.var(to_string(value), :key => key)
                 end
               end
             end
