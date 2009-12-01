@@ -53,7 +53,7 @@ module Rack
       end
       
       def to_string(obj)
-        obj.respond_to?(:trim) ? obj : obj.inspect
+        obj.respond_to?(:strip) ? obj : obj.inspect
       end
       
       def log(msg)
@@ -62,7 +62,7 @@ module Rack
       
       def post(exception, env)
         return unless production?
-        uri = URI.parse("http://hoptoadapp.com/notices/")
+        uri = URI.parse("http://hoptoadapp.com:80/notifier_api/v2/notices")
         Net::HTTP.start(uri.host, uri.port) do |http|
           headers = {
             'Content-type' => 'text/xml',
