@@ -52,8 +52,8 @@ module Rack
         end
       end
       
-      def log(msg)
-        ::File.open(@log, 'a') { |f| f.write(msg) } if @log
+      def log(*msg)
+        ::File.open(@log, 'a') { |f| f.write(msg.compact.join("\n\n")) } if @log
       end
       
       def post(exception, env)
@@ -75,17 +75,13 @@ module Rack
             env['hoptoad.notified'] = true
             log "Hoptoad Success: #{response.class}"
           else
-            log "Hoptoad Failure: #{response.class}\n\n#{response.body if response.respond_to? :body}\n\n#{@@last_response}"
+            log "Hoptoad Failure:", (response.body rescue nil), @@last_request
           end
         end
       end
       
       def production?
         %w(staging production).include?(ENV['RACK_ENV'])
-      end
-      
-      def to_string(obj)
-        obj.respond_to?(:strip) ? obj : obj.inspect
       end
       
       def xml(exception, env)
@@ -117,14 +113,14 @@ module Rack
             if request.params.any?
               r.params do |p|
                 request.params.each do |key, value|
-                  p.var(to_string(value), :key => key)
+                  p.var(value.to_s, :key => key)
                 end
               end
             end
             if environment.any?
               r.tag!('cgi-data') do |c|
                 environment.each do |key, value|
-                  c.var(to_string(value), :key => key)
+                  c.var(value.to_s, :key => key)
                 end
               end
             end
@@ -134,12 +130,12 @@ module Rack
             s.tag! 'environment-name', ENV['RACK_ENV'] || 'development'
           end
         end
-        @@last_response = xml.target!
+        @@last_request = xml.target!
       end
       
       class <<self
-        def last_response
-          @@last_response
+        def last_request
+          @@last_request
         end
       end
 

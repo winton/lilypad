@@ -28,6 +28,7 @@ describe Rack::Lilypad do
   end
   
   it "should write to a log if specified" do
+    @http.stub!(:post).and_return false
     path = "#{SPEC}/fixtures/hoptoad.log"
     notifier = Rack::Lilypad.new(@app, '') do |app|
       app.log = path
@@ -48,10 +49,16 @@ describe Rack::Lilypad do
   end
   
   it "should transfer valid XML to Hoptoad" do
-    get "/raise" rescue nil
+    # Test complex environment variables
+    @env['rack.hash_test'] = { :test => true }
+    @env['rack.object_test'] = Object.new
     
+    notifier = Rack::Lilypad.new(@app, '')
+    notifier.call(@env) rescue nil
+    
+    # Validate XML
     xsd = Nokogiri::XML::Schema(File.read(SPEC + '/fixtures/hoptoad_2_0.xsd'))
-    doc = Nokogiri::XML(Rack::Lilypad::Hoptoad.last_response)
+    doc = Nokogiri::XML(Rack::Lilypad::Hoptoad.last_request)
     
     errors = xsd.validate(doc)
     errors.each do |error|
