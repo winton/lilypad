@@ -15,8 +15,9 @@ Rails
 
 In **config/environment.rb**:
 
-<pre> 
+<pre>
 require 'rack/lilypad'
+
 Rails::Initializer.run do |config|
   ENV['RACK_ENV'] = ENV['RAILS_ENV']
   config.middleware.use Rack::Lilypad, 'hoptoad_api_key_goes_here'
@@ -28,6 +29,7 @@ Sinatra
 
 <pre>
 require 'rack/lilypad'
+
 class MyApp < Sinatra::Default
   enable :raise_errors
   use Rack::Lilypad, 'hoptoad_api_key_goes_here'
