@@ -30,8 +30,8 @@ Sinatra
 <pre>
 require 'rack/lilypad'
 
-class MyApp < Sinatra::Default
-  enable :raise_errors
+class MyApp < Sinatra::Application
+  enable :raise_errors # not necessary for Sinatra::Base
   use Rack::Lilypad, 'hoptoad_api_key_goes_here'
 end
 </pre>
