@@ -53,7 +53,8 @@ module Rack
       end
       
       def log(*msg)
-        ::File.open(@log, 'a') { |f| f.write(msg.compact.join("\n\n")) } if @log
+        msg = msg.compact.join("\n\n") + "\n\n"
+        ::File.open(@log, 'a') { |f| f.write(msg) } if @log
       end
       
       def post(exception, env)
