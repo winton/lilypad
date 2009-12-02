@@ -22,21 +22,31 @@ describe Rack::Lilypad do
   it "should yield a configuration object to the block when created" do
     notifier = Rack::Lilypad.new(@app, '') do |app|
       app.filters << %w(T1 T2)
+      app.log = 'T3'
     end
-    notifier.filters.should include('T1')
-    notifier.filters.should include('T2')
+    notifier.filters.include?('T1').should == true
+    notifier.filters.include?('T2').should == true
+    notifier.log.should == 'T3'
   end
   
-  it "should write to a log if specified" do
-    @http.stub!(:post).and_return false
-    path = "#{SPEC}/fixtures/hoptoad.log"
+  it "should write to a log file on success and failure" do
+    log = "#{SPEC}/fixtures/hoptoad.log"
     notifier = Rack::Lilypad.new(@app, '') do |app|
-      app.log = path
+      app.log = log
     end
+    
     notifier.call(@env) rescue nil
-    File.exists?(path).should == true
-    File.delete path
-    File.exists?(path).should == false
+    
+    File.exists?(log).should == true
+    File.read(log).should =~ /Hoptoad Success/
+    File.delete(log)
+    
+    @http.stub!(:post).and_return false
+    notifier.call(@env) rescue nil
+    
+    File.exists?(log).should == true
+    File.read(log).should =~ /Hoptoad Failure/
+    File.delete(log)
   end
   
   it "should post an error to Hoptoad" do
