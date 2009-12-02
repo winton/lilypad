@@ -8,7 +8,6 @@ GEM_SPEC = Gem::Specification.new do |s|
   s.summary = "Hoptoad notifier for rack-based frameworks"
   # == CONFIGURE ==
   s.add_dependency('builder', '>=2.1.2')
-  s.add_dependency('nokogiri', '>=1.4.0')
   s.extra_rdoc_files = [ "README.markdown" ]
   s.files = GEM_FILES.to_a
   s.has_rdoc = false
