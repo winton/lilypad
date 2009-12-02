@@ -15,7 +15,7 @@ describe Rack::Lilypad do
     @http = mock(:http)
     @http.stub!(:read_timeout=)
     @http.stub!(:open_timeout=)
-    @http.stub!(:post).and_return Net::HTTPSuccess
+    @http.stub!(:post).and_return Net::HTTPOK.new(nil, nil, nil)
     Net::HTTP.stub!(:start).and_yield(@http)
   end
   

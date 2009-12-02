@@ -70,7 +70,8 @@ module Rack
             http.post uri.path, xml(exception, env), headers
           rescue TimeoutError => e
           end
-          if response == Net::HTTPSuccess
+          case response
+          when Net::HTTPSuccess
             env['hoptoad.notified'] = true
             log "Hoptoad Success: #{response.class}"
           else
