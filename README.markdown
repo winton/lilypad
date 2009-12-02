@@ -10,15 +10,34 @@ Install
 sudo gem install lilypad --source http://gemcutter.org
 </pre>
 
-Use it
-------
+Rails
+-----
+
+In **config/environment.rb**:
+
+<pre> 
+require 'rack/lilypad'
+Rails::Initializer.run do |config|
+  ENV['RACK_ENV'] = ENV['RAILS_ENV']
+  config.middleware.use Rack::Lilypad, 'hoptoad_api_key_goes_here'
+end
+</pre>
+
+Sinatra
+-------
 
 <pre>
 require 'rack/lilypad'
-use Rack::Lilypad, 'hoptoad_api_key_goes_here'
+class MyApp < Sinatra::Default
+  enable :raise_errors
+  use Rack::Lilypad, 'hoptoad_api_key_goes_here'
+end
 </pre>
 
-To specify environment filters:
+Filters
+-------
+
+Don't send certain environment variables to Hoptoad.
 
 <pre>
 use Rack::Lilypad, 'hoptoad_api_key_goes_here' do |hoptoad|
@@ -26,17 +45,10 @@ use Rack::Lilypad, 'hoptoad_api_key_goes_here' do |hoptoad|
 end
 </pre>
 
-In Rails, you will need to do this in the <code>Rails::Initializer.run</code> block in environment.rb:
-
-<pre>
-ENV['RACK_ENV'] = ENV['RAILS_ENV']
-config.middleware.use Rack::Lilypad, 'hoptoad_api_key_goes_here'
-</pre>
-
 Debug
 -----
 
-Use the log option to see what is happening:
+See what you are sending and receiving from Hoptoad.
 
 <pre>
 use Rack::Lilypad, 'hoptoad_api_key_goes_here' do |hoptoad|
