@@ -13,14 +13,26 @@ sudo gem install lilypad --source http://gemcutter.org
 Rails
 -----
 
-In **config/environment.rb**:
+**config/environment.rb**:
 
 <pre>
 require 'rack/lilypad'
 
 Rails::Initializer.run do |config|
   ENV['RACK_ENV'] = ENV['RAILS_ENV']
-  config.middleware.use Rack::Lilypad, 'hoptoad_api_key_goes_here'
+  config.middleware.insert_after(ActionController::Failsafe, Rack::Lilypad, 'hoptoad_api_key_goes_here')
+end
+</pre>
+
+**app/controllers/application_controller.rb**:
+
+<pre>
+class ApplicationController < ActionController::Base
+
+  def rescue_action(exception)
+    super
+    raise exception
+  end
 end
 </pre>
 
@@ -43,7 +55,7 @@ Don't send certain environment variables to Hoptoad.
 
 <pre>
 use Rack::Lilypad, 'hoptoad_api_key_goes_here' do |hoptoad|
-  hoptoad.filters << %w(AWS_ACCESS_KEY  AWS_SECRET_ACCESS_KEY AWS_ACCOUNT SSH_AUTH_SOCK)
+  hoptoad.filters << %w(AWS_ACCESS_KEY AWS_SECRET_ACCESS_KEY AWS_ACCOUNT SSH_AUTH_SOCK)
 end
 </pre>
 
@@ -57,6 +69,11 @@ use Rack::Lilypad, 'hoptoad_api_key_goes_here' do |hoptoad|
   hoptoad.log = '/var/www/log/hoptoad.log'
 end
 </pre>
+
+Compatibility
+-------------
+
+Tested with Ruby 1.8.6, 1.8.7, and 1.9.1.
 
 Thanks
 ------

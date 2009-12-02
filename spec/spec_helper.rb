@@ -10,6 +10,7 @@ require 'nokogiri'
 require 'rack/test'
 require 'sinatra/base'
 
+require File.expand_path("#{SPEC}/fixtures/rails/config/environment")
 require File.expand_path("#{SPEC}/fixtures/sinatra")
 
 Spec::Runner.configure do |config|

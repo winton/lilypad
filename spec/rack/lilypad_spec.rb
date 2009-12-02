@@ -3,15 +3,11 @@ require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
 describe Rack::Lilypad do
 
   include Rack::Test::Methods
-
-  def app
-    SinatraApp.new
-  end
   
   before(:each) do
     ENV['RACK_ENV'] = 'production'
     @app = lambda { |env| raise TestError, 'Test' }
-    @env = Rack::MockRequest.env_for("/raise")
+    @env = Rack::MockRequest.env_for("/pulse")
     @http = mock(:http)
     @http.stub!(:read_timeout=)
     @http.stub!(:open_timeout=)
@@ -49,15 +45,6 @@ describe Rack::Lilypad do
     File.delete(log)
   end
   
-  it "should post an error to Hoptoad" do
-    @http.should_receive(:post)
-    get "/raise" rescue nil
-  end
-  
-  it "should re-raise the exception" do
-    lambda { get "/raise" }.should raise_error(TestError)
-  end
-  
   it "should transfer valid XML to Hoptoad" do
     # Test complex environment variables
     @env['rack.hash_test'] = { :test => true }
@@ -77,9 +64,47 @@ describe Rack::Lilypad do
     errors.length.should == 0
   end
   
-  it "should not do anything if non-production environment" do
-    ENV['RACK_ENV'] = 'development'
-    @http.should_not_receive(:post)
-    get "/raise" rescue nil
+  describe 'Rails' do
+    
+    def app
+      ActionController::Dispatcher.new
+    end
+    
+    it "should post an error to Hoptoad" do
+      @http.should_receive(:post)
+      get "/pulse" rescue nil
+    end
+
+    it "should re-raise the exception" do
+      lambda { get "/pulse" }.should raise_error(TestError)
+    end
+    
+    it "should not do anything if non-production environment" do
+      ENV['RACK_ENV'] = 'development'
+      @http.should_not_receive(:post)
+      get "/pulse" rescue nil
+    end
+  end
+  
+  describe 'Sinatra' do
+    
+    def app
+      SinatraApp.new
+    end
+    
+    it "should post an error to Hoptoad" do
+      @http.should_receive(:post)
+      get "/pulse" rescue nil
+    end
+
+    it "should re-raise the exception" do
+      lambda { get "/pulse" }.should raise_error(TestError)
+    end
+    
+    it "should not do anything if non-production environment" do
+      ENV['RACK_ENV'] = 'development'
+      @http.should_not_receive(:post)
+      get "/pulse" rescue nil
+    end
   end
 end

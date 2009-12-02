@@ -2,7 +2,7 @@ class SinatraApp < Sinatra::Base
   
   use Rack::Lilypad, 'xxx'
   
-  get "/raise" do
+  get "/pulse" do
     raise TestError, 'Test'
   end
 end

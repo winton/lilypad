@@ -7,11 +7,13 @@ GEM_SPEC = Gem::Specification.new do |s|
   s.homepage = "http://github.com/winton/#{GEM_NAME}"
   s.summary = "Hoptoad notifier for rack-based frameworks"
   # == CONFIGURE ==
+  s.add_dependency('builder', '>=2.1.2')
+  s.add_dependency('nokogiri', '>=1.4.0')
   s.extra_rdoc_files = [ "README.markdown" ]
   s.files = GEM_FILES.to_a
   s.has_rdoc = false
   s.name = GEM_NAME
   s.platform = Gem::Platform::RUBY
   s.require_path = "lib"
-  s.version = "0.1.9"
+  s.version = "0.2.0"
 end
