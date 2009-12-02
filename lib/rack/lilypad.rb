@@ -31,7 +31,7 @@ module Rack
 
     class Hoptoad
       
-      def initialize(api_key, filters, log)
+      def initialize(api_key, filters=[], log=false)
         @api_key = api_key
         @filters = filters
         @log = log
@@ -109,7 +109,8 @@ module Rack
             end
           end
           n.request do |r|
-            r.component request_path
+            r.action environment['rack.lilypad.action']
+            r.component environment['rack.lilypad.component'] || request_path
             r.url request_path
             if request.params.any?
               r.params do |p|
