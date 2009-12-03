@@ -1,8 +1,13 @@
 class SinatraApp < Sinatra::Base
   
   use Rack::Lilypad, 'xxx'
+  use TestExceptionMiddleware
   
-  get "/pulse" do
+  get "/nothing" do
+    nil
+  end
+  
+  get "/test" do
     raise TestError, 'Test'
   end
 end

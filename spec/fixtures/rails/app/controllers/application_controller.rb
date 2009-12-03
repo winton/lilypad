@@ -8,15 +8,11 @@ class ApplicationController < ActionController::Base
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
   
-  def rescue_action(exception)
-    super
-    ENV['RACK_ENV'] = ENV['RAILS_ENV']
-    request.env['rack.lilypad.component'] = params[:controller]
-    request.env['rack.lilypad.action'] = params[:action]
-    raise exception
+  def nothing
+    render :nothing => true
   end
   
-  def pulse
+  def test
     raise TestError, 'Test'
   end
 end

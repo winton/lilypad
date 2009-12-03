@@ -5,9 +5,8 @@ describe Rack::Lilypad do
   include Rack::Test::Methods
   
   before(:each) do
-    ENV['RAILS_ENV'] = ENV['RACK_ENV'] = 'production'
     @app = lambda { |env| raise TestError, 'Test' }
-    @env = Rack::MockRequest.env_for("/pulse")
+    @env = Rack::MockRequest.env_for("/test")
     @http = mock(:http)
     @http.stub!(:read_timeout=)
     @http.stub!(:open_timeout=)
@@ -71,15 +70,28 @@ describe Rack::Lilypad do
       ActionController::Dispatcher.new
     end
     
+    it "should set ENV['RACK_ENV']" do
+      ENV['RACK_ENV'].should == 'production'
+    end
+    
     it "should post an error to Hoptoad" do
       @http.should_receive(:post)
-      get "/pulse" rescue nil
+      get "/test" rescue nil
+    end
+    
+    it "should re-raise the exception (with ActionController::Failsafe disabled)" do
+      lambda { get "/test" }.should raise_error(TestError)
+    end
+    
+    it "should catch middleware exceptions" do
+      @http.should_receive(:post)
+      get "/nothing?test_exception=1" rescue nil
     end
     
     it "should not do anything if non-production environment" do
       ENV['RACK_ENV'] = 'development'
       @http.should_not_receive(:post)
-      get "/pulse" rescue nil
+      get "/test" rescue nil
     end
   end
   
@@ -89,19 +101,28 @@ describe Rack::Lilypad do
       SinatraApp.new
     end
     
+    before(:each) do
+      ENV['RACK_ENV'] = 'production'
+    end
+    
     it "should post an error to Hoptoad" do
       @http.should_receive(:post)
-      get "/pulse" rescue nil
+      get "/test" rescue nil
     end
 
     it "should re-raise the exception" do
-      lambda { get "/pulse" }.should raise_error(TestError)
+      lambda { get "/test" }.should raise_error(TestError)
+    end
+    
+    it "should catch middleware exceptions" do
+      @http.should_receive(:post)
+      get "/nothing?test_exception=1" rescue nil
     end
     
     it "should not do anything if non-production environment" do
       ENV['RACK_ENV'] = 'development'
       @http.should_not_receive(:post)
-      get "/pulse" rescue nil
+      get "/test" rescue nil
     end
   end
 end

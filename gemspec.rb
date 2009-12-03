@@ -14,5 +14,5 @@ GEM_SPEC = Gem::Specification.new do |s|
   s.name = GEM_NAME
   s.platform = Gem::Platform::RUBY
   s.require_path = "lib"
-  s.version = "0.2.2"
+  s.version = "0.2.3"
 end

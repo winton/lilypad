@@ -10,6 +10,10 @@ require 'nokogiri'
 require 'rack/test'
 require 'sinatra/base'
 
+# Depend on rack/lilypad/rails to set ENV['RACK_ENV'] from this
+ENV['RAILS_ENV'] = 'production'
+
+require File.expand_path("#{SPEC}/fixtures/test_exception_middleware")
 require File.expand_path("#{SPEC}/fixtures/rails/config/environment")
 require File.expand_path("#{SPEC}/fixtures/sinatra")
 

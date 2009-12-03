@@ -21,21 +21,8 @@ require 'rack/lilypad'
 Rails::Initializer.run do |config|
   config.middleware.insert_after(ActionController::Failsafe, Rack::Lilypad, 'hoptoad_api_key_goes_here')
 end
-</pre>
 
-**app/controllers/application_controller.rb**:
-
-<pre>
-class ApplicationController < ActionController::Base
-
-  def rescue_action(exception)
-    super
-    ENV['RACK_ENV'] = ENV['RAILS_ENV']
-    request.env['rack.lilypad.component'] = params[:controller]
-    request.env['rack.lilypad.action'] = params[:action]
-    raise exception
-  end
-end
+require 'rack/lilypad/rails'
 </pre>
 
 Sinatra
@@ -45,7 +32,7 @@ Sinatra
 require 'rack/lilypad'
 
 class MyApp < Sinatra::Application
-  enable :raise_errors # not necessary for Sinatra::Base
+  enable :raise_errors # Not needed when inheriting from Sinatra::Base
   use Rack::Lilypad, 'hoptoad_api_key_goes_here'
 end
 </pre>
