@@ -74,10 +74,6 @@ describe Rack::Lilypad do
       @http.should_receive(:post)
       get "/pulse" rescue nil
     end
-
-    it "should re-raise the exception" do
-      lambda { get "/pulse" }.should raise_error(TestError)
-    end
     
     it "should not do anything if non-production environment" do
       ENV['RACK_ENV'] = 'development'

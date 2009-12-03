@@ -41,5 +41,4 @@ Rails::Initializer.run do |config|
   
   ENV['RACK_ENV'] = ENV['RAILS_ENV']
   config.middleware.insert_after(ActionController::Failsafe, Rack::Lilypad, 'xxx')
-  config.middleware.delete(ActionController::Failsafe) # so we can test re-raise
 end
