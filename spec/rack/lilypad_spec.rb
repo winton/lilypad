@@ -5,7 +5,7 @@ describe Rack::Lilypad do
   include Rack::Test::Methods
   
   before(:each) do
-    ENV['RACK_ENV'] = 'production'
+    ENV['RAILS_ENV'] = ENV['RACK_ENV'] = 'production'
     @app = lambda { |env| raise TestError, 'Test' }
     @env = Rack::MockRequest.env_for("/pulse")
     @http = mock(:http)
@@ -52,16 +52,17 @@ describe Rack::Lilypad do
     
     notifier = Rack::Lilypad.new(@app, '')
     notifier.call(@env) rescue nil
-    
-    # Validate XML
-    xsd = Nokogiri::XML::Schema(File.read(SPEC + '/fixtures/hoptoad_2_0.xsd'))
-    doc = Nokogiri::XML(Rack::Lilypad::Hoptoad.last_request)
-    
-    errors = xsd.validate(doc)
-    errors.each do |error|
-      puts error.message
+    validate_xml
+  end
+  
+  it "should allow direct access to the post method" do
+    @http.should_receive(:post)
+    begin
+      raise TestError, 'Test'
+    rescue Exception => e
+      Rack::Lilypad.notify(e)
     end
-    errors.length.should == 0
+    validate_xml
   end
   
   describe 'Rails' do

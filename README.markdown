@@ -13,13 +13,12 @@ sudo gem install lilypad --source http://gemcutter.org
 Rails
 -----
 
-**config/environment.rb**:
+**config/environment.rb**
 
 <pre>
 require 'rack/lilypad'
 
 Rails::Initializer.run do |config|
-  ENV['RACK_ENV'] = ENV['RAILS_ENV']
   config.middleware.insert_after(ActionController::Failsafe, Rack::Lilypad, 'hoptoad_api_key_goes_here')
 end
 </pre>
@@ -31,6 +30,7 @@ class ApplicationController < ActionController::Base
 
   def rescue_action(exception)
     super
+    ENV['RACK_ENV'] = ENV['RAILS_ENV']
     request.env['rack.lilypad.component'] = params[:controller]
     request.env['rack.lilypad.action'] = params[:action]
     raise exception
@@ -61,8 +61,21 @@ use Rack::Lilypad, 'hoptoad_api_key_goes_here' do |hoptoad|
 end
 </pre>
 
-Debug
------
+Direct Access
+-------------
+
+Send exceptions to Hoptoad from a rescue block.
+
+<pre>
+begin
+  raise 'Test'
+rescue Exception => e
+  Rack::Lilypad.notify(e)
+end
+</pre>
+
+Log
+---
 
 See what you are sending and receiving from Hoptoad.
 

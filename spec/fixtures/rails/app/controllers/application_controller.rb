@@ -10,6 +10,7 @@ class ApplicationController < ActionController::Base
   
   def rescue_action(exception)
     super
+    ENV['RACK_ENV'] = ENV['RAILS_ENV']
     request.env['rack.lilypad.component'] = params[:controller]
     request.env['rack.lilypad.action'] = params[:action]
     raise exception

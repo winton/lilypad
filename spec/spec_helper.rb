@@ -23,5 +23,16 @@ def debug(object)
   puts "</pre>"
 end
 
+def validate_xml
+  xsd = Nokogiri::XML::Schema(File.read(SPEC + '/fixtures/hoptoad_2_0.xsd'))
+  doc = Nokogiri::XML(Rack::Lilypad::Hoptoad.last_request)
+  
+  errors = xsd.validate(doc)
+  errors.each do |error|
+    puts error.message
+  end
+  errors.length.should == 0
+end
+
 class TestError < RuntimeError
 end

@@ -14,7 +14,7 @@ module Rack
       @log = false
       yield self if block_given?
       @filters.flatten!
-      @hoptoad = Hoptoad.new(api_key, @filters, @log)
+      @@hoptoad = @hoptoad = Hoptoad.new(api_key, @filters, @log)
     end
 
     def call(env)
@@ -27,6 +27,13 @@ module Rack
         end
       @hoptoad.post(env['rack.exception'], env) if env['rack.exception']
       [ status, headers, body ]
+    end
+    
+    class <<self
+      
+      def notify(e)
+        @@hoptoad.post(e)
+      end
     end
 
     class Hoptoad
@@ -57,7 +64,7 @@ module Rack
         ::File.open(@log, 'a') { |f| f.write(msg) } if @log
       end
       
-      def post(exception, env)
+      def post(exception, env=nil)
         return unless production?
         uri = URI.parse("http://hoptoadapp.com:80/notifier_api/v2/notices")
         Net::HTTP.start(uri.host, uri.port) do |http|
@@ -73,7 +80,7 @@ module Rack
           end
           case response
           when Net::HTTPSuccess
-            env['hoptoad.notified'] = true
+            env['hoptoad.notified'] = true if env
             log "Hoptoad Success: #{response.class}"
           else
             log "Hoptoad Failure:", (response.body rescue nil), @@last_request
@@ -86,9 +93,14 @@ module Rack
       end
       
       def xml(exception, env)
-        environment = filter(ENV.to_hash.merge(env))
-        request = Rack::Request.new(env)
-        request_path = request.script_name + request.path_info
+        environment = filter(ENV.to_hash.merge(env || {}))
+        if env
+          request = Rack::Request.new(env)
+          request_path = request.script_name + request.path_info
+        else
+          request = nil
+          request_path = 'internal'
+        end
         
         xml = ::Builder::XmlMarkup.new
         xml.instruct! :xml, :version => "1.0", :encoding => "UTF-8"
@@ -112,7 +124,7 @@ module Rack
             r.action environment['rack.lilypad.action']
             r.component environment['rack.lilypad.component'] || request_path
             r.url request_path
-            if request.params.any?
+            if request && request.params.any?
               r.params do |p|
                 request.params.each do |key, value|
                   p.var(value.to_s, :key => key)
