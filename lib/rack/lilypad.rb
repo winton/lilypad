@@ -34,6 +34,10 @@ module Rack
       def notify(e)
         @@hoptoad.post(e)
       end
+      
+      def production?
+        %w(staging production).include?(ENV['RACK_ENV'])
+      end
     end
 
     class Hoptoad
@@ -65,7 +69,7 @@ module Rack
       end
       
       def post(exception, env=nil)
-        return unless production?
+        return unless Lilypad.production?
         uri = URI.parse("http://hoptoadapp.com:80/notifier_api/v2/notices")
         Net::HTTP.start(uri.host, uri.port) do |http|
           headers = {
@@ -86,10 +90,6 @@ module Rack
             log "Hoptoad Failure:", (response.body rescue nil), @@last_request
           end
         end
-      end
-      
-      def production?
-        %w(staging production).include?(ENV['RACK_ENV'])
       end
       
       def xml(exception, env)
@@ -148,6 +148,7 @@ module Rack
       end
       
       class <<self
+        
         def last_request
           @@last_request
         end
