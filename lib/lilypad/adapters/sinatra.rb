@@ -8,3 +8,4 @@ class Lilypad
 end
 
 Sinatra::Base.send(:include, Lilypad::Sinatra)
+Sinatra::Application.send(:include, Lilypad::Sinatra)

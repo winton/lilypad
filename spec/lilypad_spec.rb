@@ -7,11 +7,7 @@ describe Rack::Lilypad do
   before(:each) do
     @app = lambda { |env| raise TestError, 'Test' }
     @env = Rack::MockRequest.env_for("/test")
-    @http = mock(:http)
-    @http.stub!(:read_timeout=)
-    @http.stub!(:open_timeout=)
-    @http.stub!(:post).and_return Net::HTTPOK.new(nil, nil, nil)
-    Net::HTTP.stub!(:start).and_yield(@http)
+    stub_net_http
   end
   
   it "should yield a configuration object to the block when created" do
@@ -77,67 +73,5 @@ describe Rack::Lilypad do
       :revision => 't3',
       :repository => 't4'
     )
-  end
-  
-  describe 'Rails' do
-    
-    def app
-      ActionController::Dispatcher.new
-    end
-    
-    it "should set ENV['RACK_ENV']" do
-      ENV['RACK_ENV'].should == 'production'
-    end
-    
-    it "should post an error to Hoptoad" do
-      @http.should_receive(:post)
-      get "/test" rescue nil
-    end
-    
-    it "should re-raise the exception (with ActionController::Failsafe disabled)" do
-      lambda { get "/test" }.should raise_error(TestError)
-    end
-    
-    it "should catch middleware exceptions" do
-      @http.should_receive(:post)
-      get "/nothing?test_exception=1" rescue nil
-    end
-    
-    it "should not do anything if non-production environment" do
-      ENV['RACK_ENV'] = 'development'
-      @http.should_not_receive(:post)
-      get "/test" rescue nil
-    end
-  end
-  
-  describe 'Sinatra' do
-    
-    def app
-      SinatraApp.new
-    end
-    
-    before(:each) do
-      ENV['RACK_ENV'] = 'production'
-    end
-    
-    it "should post an error to Hoptoad" do
-      @http.should_receive(:post)
-      get "/test" rescue nil
-    end
-
-    it "should re-raise the exception" do
-      lambda { get "/test" }.should raise_error(TestError)
-    end
-    
-    it "should catch middleware exceptions" do
-      @http.should_receive(:post)
-      get "/nothing?test_exception=1" rescue nil
-    end
-    
-    it "should not do anything if non-production environment" do
-      ENV['RACK_ENV'] = 'development'
-      @http.should_not_receive(:post)
-      get "/test" rescue nil
-    end
   end
 end

@@ -14,9 +14,8 @@ class Lilypad
         end
         
         def reset!
-          self.instance_variables.each do |name|
-            eval "#{name} = nil"
-          end
+          @action = nil
+          @component = nil
         end
       end
     end

@@ -37,12 +37,6 @@ class Lilypad
         require "#{File.dirname(__FILE__)}/adapters/rails"
       end
       
-      def reset!
-        self.instance_variables.each do |name|
-          eval "#{name} = nil"
-        end
-      end
-      
       def sinatra
         require "#{File.dirname(__FILE__)}/adapters/sinatra"
       end

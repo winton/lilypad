@@ -36,7 +36,7 @@ class Lilypad
                   end
                 end
               end
-              if env.any?
+              if env && env.any?
                 r.tag! 'cgi-data' do |c|
                   env.each do |key, value|
                     c.var value.to_s, :key => key

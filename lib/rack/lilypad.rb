@@ -3,7 +3,7 @@ module Rack
     
     def initialize(app, api_key=nil, &block)
       @app = app
-      Lilypad api_key, &block
+      ::Lilypad.config api_key, &block
     end
     
     def call(env)

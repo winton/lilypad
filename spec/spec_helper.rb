@@ -27,6 +27,14 @@ def debug(object)
   puts "</pre>"
 end
 
+def stub_net_http
+  @http = mock(:http)
+  @http.stub!(:read_timeout=)
+  @http.stub!(:open_timeout=)
+  @http.stub!(:post).and_return Net::HTTPOK.new(nil, nil, nil)
+  Net::HTTP.stub!(:start).and_yield(@http)
+end
+
 def validate_xml
   xsd = Nokogiri::XML::Schema(File.read(SPEC + '/fixtures/hoptoad_2_0.xsd'))
   doc = Nokogiri::XML(Lilypad::Hoptoad::XML.last_request)

@@ -1,7 +1,4 @@
-Sinatra::Base.class_eval do
-  # Make sure the Sinatra adapter does its job
-  set :raise_errors, false
-end
+Sinatra::Base.set :raise_errors, false
 
 class SinatraApp < Sinatra::Base
   
