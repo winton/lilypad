@@ -1,4 +1,4 @@
-require File.expand_path("#{File.dirname(__FILE__)}/../spec_helper")
+require "#{File.dirname(__FILE__)}/spec_helper"
 
 describe Rack::Lilypad do
 
@@ -15,33 +15,38 @@ describe Rack::Lilypad do
   end
   
   it "should yield a configuration object to the block when created" do
-    notifier = Rack::Lilypad.new(@app, '') do |app|
-      app.filters << %w(T1 T2)
-      app.log = 'T3'
+    Rack::Lilypad.new(@app, '') do
+      filters %w(T1 T2)
+      log 'T3'
     end
-    notifier.filters.include?('T1').should == true
-    notifier.filters.include?('T2').should == true
-    notifier.log.should == 'T3'
+    Lilypad::Config.filters.include?('T1').should == true
+    Lilypad::Config.filters.include?('T2').should == true
+    Lilypad::Config.log.should == 'T3'
+    
+    Lilypad::Config.filters []
+    Lilypad::Config.log false
   end
   
   it "should write to a log file on success and failure" do
-    log = "#{SPEC}/fixtures/hoptoad.log"
+    log_path = "#{SPEC}/fixtures/hoptoad.log"
     notifier = Rack::Lilypad.new(@app, '') do |app|
-      app.log = log
+      log log_path
     end
     
     notifier.call(@env) rescue nil
     
-    File.exists?(log).should == true
-    File.read(log).should =~ /Hoptoad Success/
-    File.delete(log)
+    File.exists?(log_path).should == true
+    File.read(log_path).should =~ /Notify Success/
+    File.delete(log_path)
     
     @http.stub!(:post).and_return false
     notifier.call(@env) rescue nil
     
-    File.exists?(log).should == true
-    File.read(log).should =~ /Hoptoad Failure/
-    File.delete(log)
+    File.exists?(log_path).should == true
+    File.read(log_path).should =~ /Notify Failure/
+    File.delete(log_path)
+    
+    Lilypad::Config.log false
   end
   
   it "should transfer valid XML to Hoptoad" do
@@ -54,14 +59,24 @@ describe Rack::Lilypad do
     validate_xml
   end
   
-  it "should allow direct access to the post method" do
+  it "should provide a notify method" do
     @http.should_receive(:post)
     begin
       raise TestError, 'Test'
     rescue Exception => e
-      Rack::Lilypad.notify(e)
+      Lilypad.notify(e)
     end
     validate_xml
+  end
+  
+  it "should provide a deploy method" do
+    Net::HTTP.should_receive(:post_form).and_return(Net::HTTPOK.new(nil, nil, nil))
+    Lilypad.deploy(
+      :username => 't1',
+      :environment => 't2',
+      :revision => 't3',
+      :repository => 't4'
+    )
   end
   
   describe 'Rails' do

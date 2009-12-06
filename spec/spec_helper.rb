@@ -2,7 +2,7 @@ $testing = true
 SPEC = File.dirname(__FILE__)
 $:.unshift File.expand_path("#{SPEC}/../lib")
 
-require 'rack/lilypad'
+require 'lilypad'
 require 'pp'
 
 require 'rubygems'
@@ -29,7 +29,7 @@ end
 
 def validate_xml
   xsd = Nokogiri::XML::Schema(File.read(SPEC + '/fixtures/hoptoad_2_0.xsd'))
-  doc = Nokogiri::XML(Rack::Lilypad::Hoptoad.last_request)
+  doc = Nokogiri::XML(Lilypad::Hoptoad::XML.last_request)
   
   errors = xsd.validate(doc)
   errors.each do |error|

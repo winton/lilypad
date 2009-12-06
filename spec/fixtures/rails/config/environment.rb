@@ -39,9 +39,9 @@ Rails::Initializer.run do |config|
   # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}')]
   # config.i18n.default_locale = :de
   
-  config.middleware.insert_after(ActionController::Failsafe, Rack::Lilypad, 'xxx')
+  config.middleware.insert_after(ActionController::Failsafe, Rack::Lilypad, '')
   config.middleware.delete(ActionController::Failsafe) # Enabling this magically makes all the specs pass! :)
   config.middleware.use(TestExceptionMiddleware)
 end
 
-require 'rack/lilypad/rails'
+Lilypad { rails }
