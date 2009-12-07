@@ -65,7 +65,8 @@ class Lilypad
         
         if @env
           request = Rack::Request.new @env
-          params = filter (request.params rescue {})
+          params = request.params rescue Hash.new
+          params = filter params
           request_path = request.script_name + request.path_info
         else
           params = {}
