@@ -13,14 +13,20 @@ class Lilypad
         rescue Exception => e
         end
         
-        log :debug, @response
+        log :deploy, @response
         success?
+      end
+      
+      class <<self
+        def last_request
+          defined?(@@last_request) ? @@last_request : nil
+        end
       end
       
       private
       
       def params
-        {
+        @@last_request = {
           'api_key' => api_key,
           'deploy[local_username]' => @options[:username],
           'deploy[rails_env]' => @options[:environment],

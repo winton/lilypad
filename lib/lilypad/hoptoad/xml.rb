@@ -53,7 +53,7 @@ class Lilypad
         end
         
         def last_request
-          @@last_request
+          defined?(@@last_request) ? @@last_request : nil
         end
       end
     end

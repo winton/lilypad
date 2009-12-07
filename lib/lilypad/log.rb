@@ -40,7 +40,12 @@ class Lilypad
     end
     
     def xml_request
-      Hoptoad::XML.last_request
+      case @type
+      when :deploy then
+        Hoptoad::Deploy.last_request
+      when :notify then
+        Hoptoad::XML.last_request
+      end
     end
   end
 end
