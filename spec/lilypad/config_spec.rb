@@ -42,4 +42,18 @@ describe Lilypad::Config do
     Lilypad::Config.should_receive(:require).with(adapter)
     Lilypad::Config.sinatra
   end
+  
+  describe :Methods do
+    
+    include Lilypad::Config::Methods
+    
+    it "should provide an api_key method" do
+      Lilypad::Config.api_key 'api_key'
+      api_key.should == 'api_key'
+      Lilypad::Config.api_key { |env, e| [ env, e ].join '_' }
+      api_key.should == 'api_key' # api string takes precedence even when block configured
+      Lilypad::Config.class_eval { @api_key = nil }
+      api_key('api_key', 'block').should == 'api_key_block' # string is nil, now use the block
+    end
+  end
 end

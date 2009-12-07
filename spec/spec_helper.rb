@@ -28,11 +28,13 @@ def debug(object)
 end
 
 def stub_net_http
+  @http_ok = Net::HTTPOK.new(nil, nil, nil)
   @http = mock(:http)
   @http.stub!(:read_timeout=)
   @http.stub!(:open_timeout=)
-  @http.stub!(:post).and_return Net::HTTPOK.new(nil, nil, nil)
+  @http.stub!(:post).and_return @http_ok
   Net::HTTP.stub!(:start).and_yield(@http)
+  Net::HTTP.stub!(:post_form).and_return(@http_ok)
 end
 
 def validate_xml

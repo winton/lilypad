@@ -65,7 +65,7 @@ describe Rack::Lilypad do
   end
   
   it "should provide a deploy method" do
-    Net::HTTP.should_receive(:post_form).and_return(Net::HTTPOK.new(nil, nil, nil))
+    Net::HTTP.should_receive(:post_form)
     Lilypad.deploy(
       :username => 't1',
       :environment => 't2',

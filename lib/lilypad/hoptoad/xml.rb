@@ -10,7 +10,7 @@ class Lilypad
           xml = ::Builder::XmlMarkup.new
           xml.instruct! :xml, :version => "1.0", :encoding => "UTF-8"
           xml.notice :version => '2.0.0' do |n|
-            n.tag! 'api-key', api_key
+            n.tag! 'api-key', api_key(env, exception)
             n.notifier do |n|
               n.name 'Lilypad'
               n.url 'http://github.com/winton/lilypad'
