@@ -114,7 +114,7 @@ describe Lilypad::Hoptoad::Notify do
     
     it "should return the correct parameters with an environment" do
       request = mock(:request)
-      request.stub!(:params).and_return {}
+      request.stub!(:params)
       request.stub!(:script_name).and_return 'request_'
       request.stub!(:path_info).and_return 'path'
       Rack::Request.stub!(:new).and_return(request)
