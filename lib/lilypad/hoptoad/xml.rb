@@ -5,7 +5,7 @@ class Lilypad
         
         include Config::Methods
         
-        def build(backtrace, env, exception, request, request_path)
+        def build(backtrace, env, exception, params, request_path)
           @@last_request = nil
           xml = ::Builder::XmlMarkup.new
           xml.instruct! :xml, :version => "1.0", :encoding => "UTF-8"
@@ -29,9 +29,9 @@ class Lilypad
               r.action Config::Request.action
               r.component Config::Request.component || request_path
               r.url request_path
-              if request && request.params.any?
+              if params.any?
                 r.params do |p|
-                  request.params.each do |key, value|
+                  params.each do |key, value|
                     p.var value.to_s, :key => key
                   end
                 end

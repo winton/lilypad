@@ -36,7 +36,7 @@ class Lilypad
       end
 
       def filter(hash)
-        return hash unless Config.filters
+        return hash if Config.filters.empty?
         hash.inject({}) do |acc, (key, val)|
           match = Config.filters.any? { |f| key.to_s =~ Regexp.new(f) }
           acc[key] = match ? "[FILTERED]" : val
@@ -65,13 +65,14 @@ class Lilypad
         
         if @env
           request = Rack::Request.new @env
+          params = filter request.params
           request_path = request.script_name + request.path_info
         else
-          request = nil
+          params = {}
           request_path = 'Internal'
         end
         
-        [ backtrace, env, @exception, request, request_path ]
+        [ backtrace, env, @exception, params, request_path ]
       end
       
       def success?

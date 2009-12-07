@@ -10,7 +10,7 @@ class Lilypad
       
       def deploy_url(url=nil)
         @deploy_url = url unless url.nil?
-        @deploy_url || "http://hoptoadapp.com/deploys.txt"
+        @deploy_url || "http://hoptoadapp.com:80/deploys.txt"
       end
       
       def environments(environments=nil)
@@ -20,7 +20,7 @@ class Lilypad
       
       def filters(filters=nil)
         @filters = filters unless filters.nil?
-        @filters
+        @filters || []
       end
       
       def log(log=nil)
@@ -30,7 +30,7 @@ class Lilypad
       
       def notify_url(url=nil)
         @notify_url = url unless url.nil?
-        @url || "http://hoptoadapp.com:80/notify_url/v2/notices"
+        @notify_url || "http://hoptoadapp.com:80/notify_url/v2/notices"
       end
       
       def rails

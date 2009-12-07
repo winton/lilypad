@@ -62,7 +62,6 @@ describe Rack::Lilypad do
     rescue Exception => e
       Lilypad.notify(e)
     end
-    validate_xml
   end
   
   it "should provide a deploy method" do
