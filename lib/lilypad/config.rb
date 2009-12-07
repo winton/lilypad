@@ -30,7 +30,7 @@ class Lilypad
       
       def notify_url(url=nil)
         @notify_url = url unless url.nil?
-        @notify_url || "http://hoptoadapp.com:80/notify_url/v2/notices"
+        @notify_url || "http://hoptoadapp.com:80/notifier_api/v2/notices"
       end
       
       def rails
