@@ -36,4 +36,6 @@ class Lilypad
   end
 end
 
-ActionController::Base.send(:include, Lilypad::Rails)
+if defined?(ActionController::Base)
+  ActionController::Base.send(:include, Lilypad::Rails)
+end

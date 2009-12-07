@@ -7,5 +7,10 @@ class Lilypad
   end
 end
 
-Sinatra::Base.send(:include, Lilypad::Sinatra)
-Sinatra::Application.send(:include, Lilypad::Sinatra)
+if defined?(Sinatra::Base)
+  Sinatra::Base.send(:include, Lilypad::Sinatra)
+end
+
+if defined?(Sinatra::Application)
+  Sinatra::Application.send(:include, Lilypad::Sinatra)
+end

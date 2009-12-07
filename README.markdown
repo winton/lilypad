@@ -10,46 +10,85 @@ Install
 sudo gem install lilypad --source http://gemcutter.org
 </pre>
 
+Basic Usage
+-----------
+
+<pre>
+require 'lilypad'
+use Rack::Lilypad, 'hoptoad_api_key_goes_here'
+</pre>
+
 Rails
 -----
 
 **config/environment.rb**
 
 <pre>
-require 'rack/lilypad'
+require 'lilypad'
 
 Rails::Initializer.run do |config|
-  config.middleware.insert_after(ActionController::Failsafe, Rack::Lilypad, 'hoptoad_api_key_goes_here')
+  config.middleware.insert_after(ActionController::Failsafe, Rack::Lilypad)
 end
 
-require 'rack/lilypad/rails'
+Lilypad do
+  api_key 'hoptoad_api_key_goes_here'
+  rails
+end
 </pre>
 
 Sinatra
 -------
 
 <pre>
-require 'rack/lilypad'
+require 'lilypad'
 
 class MyApp < Sinatra::Application
-  enable :raise_errors # Not needed when inheriting from Sinatra::Base
-  use Rack::Lilypad, 'hoptoad_api_key_goes_here'
+  use Rack::Lilypad do
+    api_key 'hoptoad_api_key_goes_here'
+    sinatra
+  end
 end
 </pre>
 
-Filters
+Options
 -------
 
-Don't send certain environment variables to Hoptoad.
+Below are the available options and their default values:
 
 <pre>
-use Rack::Lilypad, 'hoptoad_api_key_goes_here' do |hoptoad|
-  hoptoad.filters << %w(AWS_ACCESS_KEY AWS_SECRET_ACCESS_KEY AWS_ACCOUNT SSH_AUTH_SOCK)
+Lilypad do
+  api_key nil
+  environments %w(production staging)
+  deploy_url 'http://hoptoadapp.com:80/deploys.txt'
+  notify_url 'http://hoptoadapp.com:80/notify_url/v2/notices'
+  filters []  # Array of environment variables to hide from Hoptoad
+  log nil     # Path of Hoptoad log
+  rails       # Requires the Rails adapter
+  sinatra     # Requires the Sinatra adapter
 end
 </pre>
 
-Direct Access
--------------
+Error Redirection
+-----------------
+
+Conditionally redirect errors to different Hoptoad buckets.
+
+<pre>
+Lilypad do
+  api_key do |env, exception|
+    if exception.message =~ /No route matches/
+      'hoptoad_api_key_goes_here'
+    elsif env['HTTP_USER_AGENT'] =~ /crawler/
+      'hoptoad_api_key_goes_here'
+    else
+      'hoptoad_api_key_goes_here'
+    end
+  end
+end
+</pre>
+
+Notify
+------
 
 Send exceptions to Hoptoad from a rescue block.
 
@@ -57,19 +96,31 @@ Send exceptions to Hoptoad from a rescue block.
 begin
   raise 'Test'
 rescue Exception => e
-  Rack::Lilypad.notify(e)
+  Lilypad.notify(e)
 end
 </pre>
 
-Log
----
+Deploy
+------
 
-See what you are sending and receiving from Hoptoad.
+Send deploy notifications to Hoptoad.
+
+**deploy.rb**
 
 <pre>
-use Rack::Lilypad, 'hoptoad_api_key_goes_here' do |hoptoad|
-  hoptoad.log = '/var/www/log/hoptoad.log'
-end
+require 'capistrano/lilypad'
+Lilypad { api_key 'hoptoad_api_key_goes_here' }
+</pre>
+
+Or you can do it manually:
+
+<pre>
+Lilypad.deploy(
+  :environment => 'production',
+  :repository => 'git@github.com:winton/lilypad.git',
+  :revision => '8acc488967085987f0a9f2c662383119f83e1bb8',
+  :username => 'winton'
+)
 </pre>
 
 Compatibility
