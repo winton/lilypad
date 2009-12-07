@@ -60,7 +60,7 @@ Lilypad do
   api_key nil
   environments %w(production staging)
   deploy_url 'http://hoptoadapp.com:80/deploys.txt'
-  notify_url 'http://hoptoadapp.com:80/notify_url/v2/notices'
+  notify_url 'http://hoptoadapp.com:80/notifier_api/v2/notices'
   filters []  # Array of environment variables to hide from Hoptoad
   log nil     # Path of Hoptoad log
   rails       # Requires the Rails adapter
@@ -76,9 +76,9 @@ Conditionally redirect errors to different Hoptoad buckets.
 <pre>
 Lilypad do
   api_key do |env, exception|
-    if exception.message =~ /No route matches/
+    if exception && exception.message =~ /No route matches/
       'hoptoad_api_key_goes_here'
-    elsif env['HTTP_USER_AGENT'] =~ /crawler/
+    elsif env && env['HTTP_USER_AGENT'] =~ /Googlebot/
       'hoptoad_api_key_goes_here'
     else
       'hoptoad_api_key_goes_here'
