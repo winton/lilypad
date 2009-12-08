@@ -14,7 +14,7 @@ class Lilypad
             n.notifier do |n|
               n.name 'Lilypad'
               n.url 'http://github.com/winton/lilypad'
-              n.version '0.2.4'
+              n.version '0.3.0'
             end
             n.error do |e|
               e.tag! 'class', exception.class.name

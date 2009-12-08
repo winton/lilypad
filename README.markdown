@@ -50,24 +50,6 @@ class MyApp < Sinatra::Application
 end
 </pre>
 
-Options
--------
-
-Below are the available options and their default values:
-
-<pre>
-Lilypad do
-  api_key nil
-  environments %w(production staging)
-  deploy_url 'http://hoptoadapp.com:80/deploys.txt'
-  notify_url 'http://hoptoadapp.com:80/notifier_api/v2/notices'
-  filters []  # Array of environment variables to hide from Hoptoad
-  log nil     # Path of Hoptoad log
-  rails       # Requires the Rails adapter
-  sinatra     # Requires the Sinatra adapter
-end
-</pre>
-
 Error Redirection
 -----------------
 
@@ -121,6 +103,24 @@ Lilypad.deploy(
   :revision => '8acc488967085987f0a9f2c662383119f83e1bb8',
   :username => 'winton'
 )
+</pre>
+
+Options
+-------
+
+Below are the available options and their default values:
+
+<pre>
+Lilypad do
+  api_key nil
+  environments %w(production staging)
+  deploy_url 'http://hoptoadapp.com:80/deploys.txt'
+  notify_url 'http://hoptoadapp.com:80/notifier_api/v2/notices'
+  filters []  # Array of environment variables to hide from Hoptoad
+  log nil     # Path of Hoptoad log
+  rails       # Requires the Rails adapter
+  sinatra     # Requires the Sinatra adapter
+end
 </pre>
 
 Compatibility
