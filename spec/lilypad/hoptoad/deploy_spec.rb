@@ -24,7 +24,7 @@ describe Lilypad::Hoptoad::Deploy do
     end
     
     it "should log the event" do
-      @instance.should_receive(:log).with(:debug, @http_ok)
+      @instance.should_receive(:log).with(:deploy, @http_ok)
     end
     
     it "should return the success status" do
