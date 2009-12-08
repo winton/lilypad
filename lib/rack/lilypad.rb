@@ -1,4 +1,4 @@
-require File.expand_path("#{File.dirname __FILE__}/../lilypad") unless defined?(::Lilypad)
+require File.expand_path("#{File.dirname __FILE__}/../lilypad")
 
 module Rack
   class Lilypad

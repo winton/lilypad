@@ -27,6 +27,9 @@ class Lilypad
       
       private
       
+      class Backtrace < Struct.new(:file, :number, :method)
+      end
+      
       def backtrace
         regex = %r{^([^:]+):(\d+)(?::in `([^']+)')?$}
         @exception.backtrace.map do |line|
@@ -78,9 +81,6 @@ class Lilypad
       
       def success?
         @response.class.superclass == Net::HTTPSuccess
-      end
-      
-      class Backtrace < Struct.new(:file, :number, :method)
       end
     end
   end

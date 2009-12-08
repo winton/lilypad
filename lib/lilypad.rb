@@ -2,14 +2,16 @@ require 'builder'
 require 'net/http'
 require 'rack'
 
-lib = File.dirname(__FILE__)
-require "#{lib}/lilypad/config"
-require "#{lib}/lilypad/config/request"
-require "#{lib}/lilypad/log"
-require "#{lib}/lilypad/hoptoad/deploy"
-require "#{lib}/lilypad/hoptoad/notify"
-require "#{lib}/lilypad/hoptoad/xml"
-require "#{lib}/rack/lilypad"
+unless defined?(::Lilypad)
+  lib = File.dirname(__FILE__)
+  require "#{lib}/lilypad/config"
+  require "#{lib}/lilypad/config/request"
+  require "#{lib}/lilypad/log"
+  require "#{lib}/lilypad/hoptoad/deploy"
+  require "#{lib}/lilypad/hoptoad/notify"
+  require "#{lib}/lilypad/hoptoad/xml"
+  require "#{lib}/rack/lilypad"
+end
 
 class Lilypad
   class <<self
