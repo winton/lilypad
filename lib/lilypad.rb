@@ -23,6 +23,18 @@ class Lilypad
       end
     end
     
+    def limit(env)
+      if active? && production?
+        Limit.limit env
+      end
+    end
+    
+    def limit?(env)
+      if active? && production?
+        Limit.limit? env
+      end
+    end
+    
     def notify(exception, env=nil)
       if active? && production?
         Hoptoad::Notify.new env, exception
@@ -31,6 +43,12 @@ class Lilypad
     
     def production?
       Config.environments.include? ENV['RACK_ENV']
+    end
+    
+    def unlimit(env)
+      if active? && production?
+        Limit.unlimit env
+      end
     end
   end
 end

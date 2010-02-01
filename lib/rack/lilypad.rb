@@ -9,10 +9,14 @@ module Rack
     end
     
     def call(env)
+      #return if ::Lilypad.limit?(env)
+      
       status, headers, body =
         begin
           @app.call env
+          #::Lilypad.unlimit env
         rescue Exception => e
+          #::Lilypad.limit env
           ::Lilypad.notify e, env
           raise
         end

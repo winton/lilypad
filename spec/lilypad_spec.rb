@@ -73,4 +73,9 @@ describe Rack::Lilypad do
       :repository => 't4'
     )
   end
+  
+  it "should provide a limit method" do
+    Lilypad::Limit.should_receive(:limit)
+    Lilypad.limit(@env)
+  end
 end

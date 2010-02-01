@@ -4,9 +4,14 @@ require 'require'
 
 Require File.dirname(__FILE__) do
   gem(:builder, '>=2.1.2') { require 'builder' }
-  gem :require, '=0.1.6'
+  gem(:nokogiri) { require 'nokogiri' }
+  gem(:rack) { require 'rack' }
+  gem(:'rack-test') { require 'rack/test' }
+  gem :rails
   gem(:rake, '=0.8.7') { require 'rake' }
+  gem :require, '=0.1.8'
   gem :rspec, '=1.3.0'
+  gem(:sinatra) { require 'sinatra/base' }
   
   gemspec do
     author 'Winton Welsh'
@@ -18,16 +23,17 @@ Require File.dirname(__FILE__) do
     name 'lilypad'
     homepage "http://github.com/winton/#{name}"
     summary "Hoptoad notifier for rack-based frameworks"
-    version '0.3.1'
+    version '0.3.0'
   end
   
   lib do
     gem :builder
+    gem :rack
     require 'net/http'
-    require 'rack'
     require "lib/lilypad/config"
     require "lib/lilypad/config/request"
     require "lib/lilypad/log"
+    require "lib/lilypad/limit"
     require "lib/lilypad/hoptoad/deploy"
     require "lib/lilypad/hoptoad/notify"
     require "lib/lilypad/hoptoad/xml"
@@ -41,12 +47,13 @@ Require File.dirname(__FILE__) do
   end
   
   spec_helper do
+    gem :rails
+    gem :sinatra
+    gem :nokogiri
+    gem :'rack-test'
     require 'require/spec_helper'
     require 'lib/lilypad'
     require 'pp'
-    require 'nokogiri'
-    require 'rack/test'
-    require 'sinatra/base'
     require "spec/fixtures/test_exception_middleware"
     require "spec/fixtures/rails/config/environment"
     require "spec/fixtures/sinatra"

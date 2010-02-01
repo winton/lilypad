@@ -23,6 +23,11 @@ class Lilypad
         @filters || []
       end
       
+      def limit(limit=nil)
+        @limit = limit unless limit.nil?
+        @limit || 100
+      end
+      
       def log(log=nil)
         @log = log unless log.nil?
         @log
