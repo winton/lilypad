@@ -1,17 +1,5 @@
-require 'builder'
-require 'net/http'
-require 'rack'
-
-unless defined?(::Lilypad)
-  lib = File.dirname(__FILE__)
-  require "#{lib}/lilypad/config"
-  require "#{lib}/lilypad/config/request"
-  require "#{lib}/lilypad/log"
-  require "#{lib}/lilypad/hoptoad/deploy"
-  require "#{lib}/lilypad/hoptoad/notify"
-  require "#{lib}/lilypad/hoptoad/xml"
-  require "#{lib}/rack/lilypad"
-end
+require File.expand_path("#{File.dirname(__FILE__)}/../require")
+Require.lib! unless defined?(::Lilypad)
 
 class Lilypad
   class <<self
