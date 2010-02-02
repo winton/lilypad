@@ -23,15 +23,17 @@ class Lilypad
       end
     end
     
-    def limit(env)
-      if active? && production?
-        Limit.limit env
+    def limit(e, env)
+      if active? && production? && Config.limit
+        Limit.limit e, env
       end
     end
     
     def limit?(env)
-      if active? && production?
+      if active? && production? && Config.limit
         Limit.limit? env
+      else
+        false
       end
     end
     
@@ -46,7 +48,7 @@ class Lilypad
     end
     
     def unlimit(env)
-      if active? && production?
+      if active? && production? && Config.limit
         Limit.unlimit env
       end
     end

@@ -49,31 +49,35 @@ describe Lilypad::Sinatra do
   describe :limit do
     
     before(:each) do
+      @e = TestError.new
       @env = { 'PATH_INFO' => '/test', 'REQUEST_METHOD' => 'GET' }
       Lilypad::Limit.reset
+      Lilypad::Config.limit 1
     end
     
     after(:each) do
       Lilypad::Limit.reset
+      Lilypad::Config.limit 100
     end
     
-    it "should add an entry to @@errors" do
-      get "/test" rescue nil
-      Lilypad::Limit.errors.should == {"GET /test" => 1}
-    end
-    
-    it "should raise an error until the limit has been reached" do
-      100.times do
-        Lilypad::Limit.limit(@env)
-      end
+    it "should behave as expected" do
       lambda { get "/test" }.should raise_error(TestError)
-    end
-    
-    it "should not raise an error once the limit has been reached" do
-      101.times do
-        Lilypad::Limit.limit(@env)
-      end
+      
       lambda { get "/test" }.should_not raise_error(TestError)
+      last_response.redirect?.should == true
+      last_response.location.should == '/500.html'
+      
+      lambda { get "/test" }.should_not raise_error(TestError)
+      last_response.redirect?.should == true
+      last_response.location.should == '/500.html'
+      
+      Lilypad::Limit.errors["GET /test"] = Time.now.utc - 1
+      
+      lambda { get "/test" }.should raise_error(TestError)
+      
+      lambda { get "/test" }.should_not raise_error(TestError)
+      last_response.redirect?.should == true
+      last_response.location.should == '/500.html'
     end
   end
 end

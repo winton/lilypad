@@ -7,6 +7,7 @@ describe Rack::Lilypad do
   before(:each) do
     @app = lambda { |env| raise TestError, 'Test' }
     @env = Rack::MockRequest.env_for("/test")
+    @e = TestError.new
     stub_net_http
   end
   
@@ -75,17 +76,12 @@ describe Rack::Lilypad do
   end
   
   it "should provide a limit method" do
-    Lilypad::Limit.should_receive(:limit)
-    Lilypad.limit(@env)
+    Lilypad::Limit.should_receive(:limit).with(@e, @env)
+    Lilypad.limit(@e, @env)
   end
   
   it "should provide a limit? method" do
     Lilypad::Limit.should_receive(:limit?)
     Lilypad.limit?(@env)
-  end
-  
-  it "should provide a unlimit method" do
-    Lilypad::Limit.should_receive(:unlimit)
-    Lilypad.unlimit(@env)
   end
 end

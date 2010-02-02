@@ -117,6 +117,7 @@ Lilypad do
   deploy_url 'http://hoptoadapp.com:80/deploys.txt'
   notify_url 'http://hoptoadapp.com:80/notifier_api/v2/notices'
   filters []  # Array of environment variables to hide from Hoptoad
+  limit 100   # Consecutive error limit
   log nil     # Path of Hoptoad log
   rails       # Requires the Rails adapter
   sinatra     # Requires the Sinatra adapter

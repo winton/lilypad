@@ -4,53 +4,40 @@ class Lilypad
     extend Log::Methods
     
     @@errors = {}
-    @@expire = {}
     
     class <<self
       def errors
         @@errors
       end
       
-      def expire
-        @@expire
-      end
-      
-      def limit(env)
+      def limit(e, env)
         key = env_to_string(env)
         if key
           @@errors[key] ||= 0
-          @@errors[key] += 1
-          @@expire[key] = Time.now.utc + 10*60
+          if @@errors[key].class == Fixnum
+            @@errors[key] += 1
+            if @@errors[key] >= Config.limit
+              @@errors[key] = Time.now.utc + 60
+              env['lilypad'] = 'Error limit reached'
+            end
+          else
+            @@errors[key] = Time.now.utc + 60
+          end
         end
       end
       
       def limit?(env)
         key = env_to_string(env)
-        limited = if key && @@errors[key] && @@expire[key]
-          @@errors[key] > Config.limit && @@expire[key] > Time.now.utc
+        if key && @@errors[key].class == Time && @@errors[key] > Time.now.utc
+          env['lilypad'] = 'Error limit reached'
+          true
         else
           false
         end
-        if limited
-          begin
-            raise "Error limit reached"
-          rescue Exception => e
-            ::Lilypad.notify(e, env)
-          end
-        end
-        limited
       end
       
       def reset
         @@errors = {}
-        @@expire = {}
-      end
-      
-      def unlimit(env)
-        key = env_to_string(env)
-        if key
-          @@errors[env_to_string(env)] = 0
-        end
       end
       
       private

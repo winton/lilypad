@@ -9,14 +9,17 @@ module Rack
     end
     
     def call(env)
-      return Rack::Response.new.to_a if ::Lilypad.limit?(env)
+      if ::Lilypad.limit?(env)
+        r = Rack::Response.new
+        r.redirect('/500.html')
+        return r.finish
+      end
       
       status, headers, body =
         begin
           @app.call env
-          ::Lilypad.unlimit env
         rescue Exception => e
-          ::Lilypad.limit env
+          ::Lilypad.limit e, env
           ::Lilypad.notify e, env
           raise
         end
