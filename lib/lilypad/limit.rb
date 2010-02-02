@@ -26,7 +26,7 @@ class Lilypad
       
       def limit?(env)
         key = env_to_string(env)
-        limited = if key
+        limited = if key && @@errors[key] && @@expire[key]
           @@errors[key] > Config.limit && @@expire[key] > Time.now.utc
         else
           false
