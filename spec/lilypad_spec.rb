@@ -78,4 +78,14 @@ describe Rack::Lilypad do
     Lilypad::Limit.should_receive(:limit)
     Lilypad.limit(@env)
   end
+  
+  it "should provide a limit? method" do
+    Lilypad::Limit.should_receive(:limit?)
+    Lilypad.limit?(@env)
+  end
+  
+  it "should provide a unlimit method" do
+    Lilypad::Limit.should_receive(:unlimit)
+    Lilypad.unlimit(@env)
+  end
 end

@@ -7,7 +7,7 @@ Require File.dirname(__FILE__) do
   gem(:nokogiri) { require 'nokogiri' }
   gem(:rack) { require 'rack' }
   gem(:'rack-test') { require 'rack/test' }
-  gem :rails
+  gem :rails, '=2.3.5'
   gem(:rake, '=0.8.7') { require 'rake' }
   gem :require, '=0.1.8'
   gem :rspec, '=1.3.0'
