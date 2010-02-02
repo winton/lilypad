@@ -9,7 +9,7 @@ module Rack
     end
     
     def call(env)
-      return if ::Lilypad.limit?(env)
+      return Rack::Response.new.to_a if ::Lilypad.limit?(env)
       
       status, headers, body =
         begin

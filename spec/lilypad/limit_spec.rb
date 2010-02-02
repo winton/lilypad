@@ -1,9 +1,13 @@
 require File.expand_path("#{File.dirname __FILE__}/../spec_helper")
 
-describe Lilypad::Config do
+describe Lilypad::Limit do
 
   before(:each) do
     @env = { 'PATH_INFO' => '/test', 'REQUEST_METHOD' => 'GET' }
+    Lilypad::Limit.reset
+  end
+  
+  after(:each) do
     Lilypad::Limit.reset
   end
   

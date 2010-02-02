@@ -64,4 +64,36 @@ describe Lilypad::Rails do
       lambda { get "/test" }.should raise_error(TestError)
     end
   end
+  
+  describe :limit do
+    
+    before(:each) do
+      @env = { 'PATH_INFO' => '/test', 'REQUEST_METHOD' => 'GET' }
+      Lilypad::Limit.reset
+    end
+    
+    after(:each) do
+      Lilypad::Limit.reset
+    end
+    
+    it "should add an entry to @@errors" do
+      get "/test" rescue nil
+      Lilypad::Limit.errors.should == {"GET /test" => 1}
+    end
+    
+    it "should raise an error until the limit has been reached" do
+      100.times do
+        Lilypad::Limit.limit(@env)
+      end
+      lambda { get "/test" }.should raise_error(TestError)
+    end
+    
+    it "should not raise an error once the limit has been reached" do
+      101.times do
+        Lilypad::Limit.limit(@env)
+      end
+      lambda { get "/test" }.should_not raise_error(TestError)
+      last_response.body.should == ''
+    end
+  end
 end

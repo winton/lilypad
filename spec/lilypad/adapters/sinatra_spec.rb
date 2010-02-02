@@ -9,6 +9,10 @@ describe Lilypad::Sinatra do
   end
   
   describe :post do
+    
+    after(:each) do
+      ENV['RACK_ENV'] = 'production'
+    end
   
     before(:each) do
       stub_net_http
@@ -28,7 +32,6 @@ describe Lilypad::Sinatra do
       ENV['RACK_ENV'] = 'development'
       @http.should_not_receive(:post)
       get "/test" rescue nil
-      ENV['RACK_ENV'] = 'production'
     end
   end
   
@@ -40,6 +43,37 @@ describe Lilypad::Sinatra do
     
     it "should re-raise the exception" do
       lambda { get "/test" }.should raise_error(TestError)
+    end
+  end
+  
+  describe :limit do
+    
+    before(:each) do
+      @env = { 'PATH_INFO' => '/test', 'REQUEST_METHOD' => 'GET' }
+      Lilypad::Limit.reset
+    end
+    
+    after(:each) do
+      Lilypad::Limit.reset
+    end
+    
+    it "should add an entry to @@errors" do
+      get "/test" rescue nil
+      Lilypad::Limit.errors.should == {"GET /test" => 1}
+    end
+    
+    it "should raise an error until the limit has been reached" do
+      100.times do
+        Lilypad::Limit.limit(@env)
+      end
+      lambda { get "/test" }.should raise_error(TestError)
+    end
+    
+    it "should not raise an error once the limit has been reached" do
+      101.times do
+        Lilypad::Limit.limit(@env)
+      end
+      lambda { get "/test" }.should_not raise_error(TestError)
     end
   end
 end
