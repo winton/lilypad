@@ -2,16 +2,16 @@ require 'rubygems'
 gem 'require'
 require 'require'
 
-Require File.dirname(__FILE__) do
+Require do
   gem(:builder, '>=2.1.2') { require 'builder' }
-  gem(:nokogiri) { require 'nokogiri' }
-  gem(:rack) { require 'rack' }
-  gem(:'rack-test') { require 'rack/test' }
-  gem :rails
+  gem(:nokogiri, '>=1.4.1') { require 'nokogiri' }
+  gem(:rack, '>=1.0.1') { require 'rack' }
+  gem(:'rack-test', '>=0.5.3') { require 'rack/test' }
+  gem(:rails, '=2.3.5')
   gem(:rake, '=0.8.7') { require 'rake' }
-  gem :require, '=0.1.8'
+  gem :require, '=0.2.6'
   gem :rspec, '=1.3.0'
-  gem(:sinatra) { require 'sinatra/base' }
+  gem(:sinatra, '1.0') { require 'sinatra/base' }
   
   gemspec do
     author 'Winton Welsh'
@@ -23,7 +23,7 @@ Require File.dirname(__FILE__) do
     name 'lilypad'
     homepage "http://github.com/winton/#{name}"
     summary "Hoptoad notifier for rack-based frameworks"
-    version '0.3.0'
+    version '0.3.1'
   end
   
   lib do

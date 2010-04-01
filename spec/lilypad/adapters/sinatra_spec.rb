@@ -20,18 +20,18 @@ describe Lilypad::Sinatra do
   
     it "should post an error to Hoptoad" do
       @http.should_receive(:post)
-      get "/test" rescue nil
+      get "/test"
     end
   
     it "should post middleware exceptions" do
       @http.should_receive(:post)
-      get "/nothing?test_exception=1" rescue nil
+      get "/nothing?test_exception=1"
     end
   
     it "should not post anything if non-production environment" do
       ENV['RACK_ENV'] = 'development'
       @http.should_not_receive(:post)
-      get "/test" rescue nil
+      get "/test"
     end
   end
   
@@ -43,7 +43,8 @@ describe Lilypad::Sinatra do
     end
     
     it "should re-raise the exception" do
-      lambda { get "/test" }.should raise_error(TestError)
+      get "/test"
+      last_response.errors.include?('TestError').should == true
     end
   end
 end
